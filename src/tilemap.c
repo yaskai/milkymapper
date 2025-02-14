@@ -179,7 +179,7 @@ char FetchTile(Tilemap *tilemap, Coords coords) {
 }
 
 uint8_t TileGetAdj(Tilemap *tilemap, Coords pos) {
-	u_int8_t adj = 0;
+	uint8_t adj = 0;
 
 	if(FetchTile(tilemap, (Coords){pos.c, pos.r - 1}) == '1' || pos.r - 1 < 0) 				 		adj |= TOP; 
 	if(FetchTile(tilemap, (Coords){pos.c, pos.r + 1}) == '1' || pos.r + 1 > tilemap->height - 1)    adj |= BOT; 

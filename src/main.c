@@ -497,5 +497,3 @@ void DrawHelpText(int x, int y) {
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 15);
 }
 
-// This is a comment...
-
