@@ -236,11 +236,9 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 		tilemap->height = map_h;
 		tilemap->area   = map_w * map_h;
 		
-		// Resize arrays
 		tilemap->mapData = realloc(tilemap->mapData, sizeof(char) * tilemap->area);
 		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(u_int8_t) * tilemap->area);
 		
-		// Set data
 		for(u_int16_t r = 0; r < tilemap->height; r++) {
 			char line[tilemap->width];			
 			fscanf(pF, "%s", line);
@@ -249,7 +247,6 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 				tilemap->mapData[TileIndex(tilemap, c, r)] = line[c];
 		}
 		
-		// Print debug info
 		if(flags & DEBUG_A) {
 			printf("Opened %s\n", path);
 			printf("w: %d h: %d\n", tilemap->width, tilemap->height);
@@ -264,7 +261,7 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 			fseek(pF, 0, SEEK_SET);
 			printf("size: %zu bytes\n", file_size);
 		}
-		
+
 		fclose(pF);
 
 		tilemap->bounds = (Rectangle){0, 0, tilemap->width * TILE_SIZE, tilemap->height * TILE_SIZE};

@@ -45,7 +45,7 @@ u_int8_t _editor_state = HOME;
 #define WINDOW_FLAG_C 0x04
 
 u_int8_t flags = (FLAG_A);
-u_int8_t window_flags = (WINDOW_FLAG_B); 
+u_int8_t window_flags = (WINDOW_FLAG_A); 
 
 enum NewFileInput {
 	COLS,
@@ -74,9 +74,9 @@ int main () {
 		wh = 1200;
 		fps = 60;
 	} else if(window_flags & WINDOW_FLAG_C) {
-		SetTargetFPS(monitor);
 		ww = GetMonitorWidth(monitor);
 		wh = GetMonitorHeight(monitor);
+		fps = GetMonitorRefreshRate(monitor);
 	}
 
 	InitWindow(ww, wh, "Milky Mapper");
@@ -474,8 +474,9 @@ int main () {
 void DrawHelpText(int x, int y) {
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
 
-	DrawRectangleLines(x - 4, y - 4, 1008, 1008, WHITE);
-	DrawRectangle(x, y,  1000, 1000, BLACK);
+
+	DrawRectangle(x, y,  1000, 800, BLACK);
+	DrawRectangleLines(x - 4, y - 4, 1008, 800, WHITE);
 
 	GuiDrawText("COMMANDS:", (Rectangle){x, y, 500, 32}, TEXT_ALIGN_CENTER, WHITE);
 	GuiDrawText("W,	SAVE", (Rectangle){x, y + (32 * 1), 500, 32}, 0, WHITE);
