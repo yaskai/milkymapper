@@ -15,12 +15,12 @@ Vector2 dragPos;
 bool select_mode = false;
 Coords select_strt;
 Coords select_dest;
-u_int16_t selection_w;
-u_int16_t selection_h;
-u_int16_t select_count;
+uint16_t selection_w;
+uint16_t selection_h;
+uint16_t select_count;
 int select_timer = 1;
 
-u_int16_t buf_w, buf_h;
+uint16_t buf_w, buf_h;
 
 int mouse_down_timer = 1;
 
@@ -250,23 +250,23 @@ void CursorClose(Cursor *cursor) {
 }
 
 void OnClick(Cursor *cursor) {
-	u_int16_t action_w, action_h;
+	uint16_t action_w, action_h;
 
 	if(cursor->tool == PENCIL || cursor->tool == ERASER) {
 		action_w = 1;
 		action_h = 1;
 	};
 	
-	u_int8_t tile_count = action_w * action_h;
+	uint8_t tile_count = action_w * action_h;
 	
 	char *action_buffer_prev = (char*)malloc(sizeof(char) * tile_count); 
 	char *action_buffer_next = (char*)malloc(sizeof(char) * tile_count); 
 	 
 	Action action = MakeAction(cursor->grid_pos, (Coords){action_w, action_h});
 
-	for(u_int16_t i = 0; i < (action_w * action_h); i++) {
-		u_int16_t c = i % action_w;
-		u_int16_t r = i / action_w;
+	for(uint16_t i = 0; i < (action_w * action_h); i++) {
+		uint16_t c = i % action_w;
+		uint16_t r = i / action_w;
 
 		action_buffer_prev[i] = FetchTile(pTilemap, cursor->grid_pos);	
 		action_buffer_next[i] = cursor->tile_ch;
@@ -283,8 +283,8 @@ void OnClick(Cursor *cursor) {
 void SetSelectionBox(Cursor *cursor) {
 	Coords min = cursor->grid_pos;
 	Coords max = cursor->grid_pos;
-	u_int16_t box_w = 0;
-	u_int16_t box_h = 0;
+	uint16_t box_w = 0;
+	uint16_t box_h = 0;
 
 	if(select_strt.c < select_dest.c) {
 		min.c = select_strt.c;
@@ -310,9 +310,9 @@ void SetSelectionBox(Cursor *cursor) {
 	select_count = box_w * box_h;
 	cursor->select_count = select_count;
 
-	for(u_int16_t i = 0; i < select_count; i++) {
-		u_int16_t box_c = i % box_w;
-		u_int16_t box_r = i / box_w;
+	for(uint16_t i = 0; i < select_count; i++) {
+		uint16_t box_c = i % box_w;
+		uint16_t box_r = i / box_w;
 		cursor->select_box[i] = (Coords){box_c + min.c, box_r + min.r};
 	}
 
@@ -326,9 +326,9 @@ void PaintSelection(Cursor *cursor, char ch) {
 	char *paint_prev_buf = (char*)malloc(sizeof(char) * select_count);	
 	char *paint_next_buf = (char*)malloc(sizeof(char) * select_count);
 	
-	for(u_int16_t i = 0; i < select_count; i++) {
-		u_int16_t box_c = i % paint.w;
-		u_int16_t box_r = i / paint.w;
+	for(uint16_t i = 0; i < select_count; i++) {
+		uint16_t box_c = i % paint.w;
+		uint16_t box_r = i / paint.w;
 
 		paint_prev_buf[i] = pTilemap->mapData[TileIndex(pTilemap, paint.c + box_c, paint.r + box_r)];
 		paint_next_buf[i] = ch;
@@ -354,11 +354,11 @@ void Copy(Cursor *cursor) {
 	cursor->paste->h = selection_h;
 	cursor->clip_buf = realloc(cursor->clip_buf, sizeof(char) * cursor->buf_count);
 
-	for(u_int16_t i = 0; i < cursor->select_count; i++) {
+	for(uint16_t i = 0; i < cursor->select_count; i++) {
 		copy.next[i] = FetchTile(pTilemap, cursor->select_box[i]);
 		
 		if(cursor->state_flags & DEBUG_B) {
-			u_int16_t c = i % buf_w;
+			uint16_t c = i % buf_w;
 			printf("%c", copy.next[i]);
 			if(c == selection_w - 1) printf("\n");
 		}
@@ -372,13 +372,13 @@ void Paste(Cursor *cursor) {
 
 	Coords paste_coords = ClampCoords(pTilemap, cursor->grid_pos);
 	
-	u_int16_t paste_w = buf_w;
-	u_int16_t paste_h = buf_h;
+	uint16_t paste_w = buf_w;
+	uint16_t paste_h = buf_h;
 
 	if(paste_coords.c + paste_w > pTilemap->width)  paste_w = (pTilemap->width - paste_coords.c);
 	if(paste_coords.r + paste_h > pTilemap->height) paste_h = (pTilemap->height - paste_coords.r);
 
-	u_int16_t paste_count = paste_w * paste_h;
+	uint16_t paste_count = paste_w * paste_h;
 	
 	char *paste_prev_buf = (char*)(malloc(sizeof(char) * paste_count));
 	char *paste_next_buf = (char*)(malloc(sizeof(char) * paste_count));
@@ -388,10 +388,10 @@ void Paste(Cursor *cursor) {
 	// Add check for left
 	// and top of bounds
 	
-	for(u_int16_t r = 0; r < paste_h; r++) {
-		for(u_int16_t c = 0; c < paste_w; c++) {
-			u_int16_t paste_idx = c + r * paste_w;
-			u_int16_t bufrr_idx = c + r * buf_w;
+	for(uint16_t r = 0; r < paste_h; r++) {
+		for(uint16_t c = 0; c < paste_w; c++) {
+			uint16_t paste_idx = c + r * paste_w;
+			uint16_t bufrr_idx = c + r * buf_w;
 
 			paste_prev_buf[bufrr_idx] = FetchTile(pTilemap, (Coords){paste_coords.c + c, paste_coords.r + r}); 		
 			paste_next_buf[paste_idx] = cursor->clip_buf[bufrr_idx];

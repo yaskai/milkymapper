@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "tilemap.h"
 
-enum Tool : u_int8_t {
+enum Tool : uint8_t {
 	PENCIL,
 	SELECT,
 	ERASER
@@ -17,11 +17,11 @@ enum Tool : u_int8_t {
 #define C_SHOW_CLIP 0x08
 
 typedef struct {
-	u_int8_t state_flags;
+	uint8_t state_flags;
 	char tile_ch;
 	enum Tool tool;
-	u_int16_t select_count;
-	u_int16_t buf_count;
+	uint16_t select_count;
+	uint16_t buf_count;
 	bool on_ui;
 	float ui_cooldown;
 	Coords grid_pos;

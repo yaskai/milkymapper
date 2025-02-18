@@ -32,6 +32,9 @@ obj/x64/Debug/milkymapper/main.o: ../../src/main.c \
  /usr/include/bits/atomic_wide_counter.h /usr/include/bits/struct_mutex.h \
  /usr/include/bits/struct_rwlock.h ../external/raylib-master/src/raylib.h \
  ../../src/include/resource_dir.h ../../src/spritesheet.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h \
  ../../src/include/raygui.h /usr/include/ctype.h /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/alloca.h /usr/include/bits/stdlib-float.h \
@@ -49,9 +52,6 @@ obj/x64/Debug/milkymapper/main.o: ../../src/main.c \
  ../../src/include/styles/style_bluish.h \
  ../../src/include/styles/style_terminal.h \
  ../../src/include/styles/style_cherry.h ../../src/tilemap.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h \
- /usr/include/stdint.h /usr/include/bits/wchar.h \
- /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h \
  ../../src/cursor.h
 /usr/include/stdc-predef.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdbool.h:
@@ -110,6 +110,11 @@ obj/x64/Debug/milkymapper/main.o: ../../src/main.c \
 ../external/raylib-master/src/raylib.h:
 ../../src/include/resource_dir.h:
 ../../src/spritesheet.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h:
+/usr/include/stdint.h:
+/usr/include/bits/wchar.h:
+/usr/include/bits/stdint-uintn.h:
+/usr/include/bits/stdint-least.h:
 ../../src/include/raygui.h:
 /usr/include/ctype.h:
 /usr/include/stdlib.h:
@@ -138,9 +143,4 @@ obj/x64/Debug/milkymapper/main.o: ../../src/main.c \
 ../../src/include/styles/style_terminal.h:
 ../../src/include/styles/style_cherry.h:
 ../../src/tilemap.h:
-/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h:
-/usr/include/stdint.h:
-/usr/include/bits/wchar.h:
-/usr/include/bits/stdint-uintn.h:
-/usr/include/bits/stdint-least.h:
 ../../src/cursor.h:

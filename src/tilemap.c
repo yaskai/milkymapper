@@ -11,14 +11,14 @@ float scaled_tile_size = TILE_SIZE;
 
 Color grid_color = RAYWHITE;
 
-u_int16_t tile_lft;
-u_int16_t tile_rgt;
-u_int16_t tile_top;
-u_int16_t tile_bot;
+uint16_t tile_lft;
+uint16_t tile_rgt;
+uint16_t tile_top;
+uint16_t tile_bot;
 
 Spritesheet misc_ss;
 
-void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, u_int16_t width, u_int16_t height) {
+void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, uint16_t width, uint16_t height) {
 	tilemap->cam = cam;
 	tilemap->spritesheet = ss;
 	
@@ -28,7 +28,7 @@ void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, u_int16_t wid
 	tilemap->tileSize = (Vector2){TILE_SIZE, TILE_SIZE};
 	
 	tilemap->mapData = (char*)malloc(sizeof(char));
-	tilemap->spr_index = (u_int8_t*)malloc(sizeof(u_int8_t));
+	tilemap->spr_index = (uint8_t*)malloc(sizeof(uint8_t));
 	
 	tilemap->action_count = 0;
 	tilemap->action_index = 0;
@@ -42,15 +42,15 @@ void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, u_int16_t wid
 
 void TilemapUpdateSprites(Tilemap *tilemap) {
 	for(uint16_t i = 0; i < tilemap->area; i++) {
-		u_int16_t c = i % tilemap->width;
-		u_int16_t r = i / tilemap->width;
+		uint16_t c = i % tilemap->width;
+		uint16_t r = i / tilemap->width;
 		tilemap->spr_index[i] = TileGetAdj(tilemap, (Coords){c, r});
 	}
 }
 
 void DrawTiles(Tilemap *tilemap) {
-	u_int16_t frame_w = (1920 / scaled_tile_size) + 4;
-	u_int16_t frame_h = (1080 / scaled_tile_size) + 4;
+	uint16_t frame_w = (1920 / scaled_tile_size) + 4;
+	uint16_t frame_h = (1080 / scaled_tile_size) + 4;
 	
 	tile_lft = ScreenToGrid(tilemap, (Vector2){tilemap->cam->target.x, tilemap->cam->target.y}).c - 2;
 	tile_rgt = tile_lft + frame_w;
@@ -72,17 +72,17 @@ void DrawTiles(Tilemap *tilemap) {
 	if(tile_top < 0) tile_top = 0;
 	if(tile_bot > tilemap->height) tile_bot = tilemap->height;
 
-	for(u_int16_t r = tile_top; r < tile_bot; r++) {
-		for(u_int16_t c = tile_lft; c < tile_rgt; c++) {
+	for(uint16_t r = tile_top; r < tile_bot; r++) {
+		for(uint16_t c = tile_lft; c < tile_rgt; c++) {
 			GetDrawTile(tilemap, FetchTile(tilemap, (Coords){c, r}), (Coords){c, r}, TileIndex(tilemap, c, r));
 		}
 	}
 }
 
 void DrawTileGrid(Tilemap *tilemap) {
-	for(u_int16_t i = 0; i < tilemap->area; i++) {
-		u_int16_t c = i % tilemap->width;
-		u_int16_t r = i / tilemap->width;
+	for(uint16_t i = 0; i < tilemap->area; i++) {
+		uint16_t c = i % tilemap->width;
+		uint16_t r = i / tilemap->width;
 
 		DrawRectangleLines(c * 64, r * 64,  64, 64, grid_color);
 		
@@ -94,7 +94,7 @@ void DrawTileGrid(Tilemap *tilemap) {
 
 	if(tilemap->flags & DEBUG_C) {
 		// Visual debug info
-		for(u_int16_t i = 0; i < tilemap->action_count; i++) {
+		for(uint16_t i = 0; i < tilemap->action_count; i++) {
 			Action current = tilemap->actions[i];
 			Vector2 draw_pos = CoordsToScreen(tilemap, (Coords){current.c, current.r});
 			
@@ -135,11 +135,11 @@ Vector2 CoordsToScreen(Tilemap *tilemap, Coords coords) {
 	};
 }
 
-u_int16_t TileIndex(Tilemap *tilemap, u_int16_t c, u_int16_t r) {
+uint16_t TileIndex(Tilemap *tilemap, uint16_t c, uint16_t r) {
 	return c + r * tilemap->width;
 }
 
-Coords TileCoords(Tilemap *tilemap, u_int16_t index) {
+Coords TileCoords(Tilemap *tilemap, uint16_t index) {
 	return (Coords) {
 		index % tilemap->width,
 		index / tilemap->width
@@ -168,9 +168,9 @@ bool InBounds(Tilemap *tilemap, Coords coords) {
 	} else return false;
 }
 
-bool InBoundsIndex(Tilemap *tilemap, u_int16_t index) {
-	u_int16_t c = index % tilemap->width;
-	u_int16_t r = index / tilemap->width;
+bool InBoundsIndex(Tilemap *tilemap, uint16_t index) {
+	uint16_t c = index % tilemap->width;
+	uint16_t r = index / tilemap->width;
 	if(InBounds(tilemap, (Coords){c, r})) return true;
 	else return false;
 }
@@ -203,7 +203,7 @@ uint8_t TileGetAdj(Tilemap *tilemap, Coords pos) {
 	return adj;
 }
 
-void GetDrawTile(Tilemap *tilemap, char tile_ch, Coords coords, u_int16_t tile_index) {
+void GetDrawTile(Tilemap *tilemap, char tile_ch, Coords coords, uint16_t tile_index) {
 	Vector2 draw_pos = CoordsToScreen(tilemap, coords);
 
 	switch(tile_ch) {
@@ -233,7 +233,7 @@ void GetDrawTile(Tilemap *tilemap, char tile_ch, Coords coords, u_int16_t tile_i
 	}
 }
 
-void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
+void TilemapLoad(Tilemap *tilemap, char *path, uint8_t flags) {
 	FILE *pF = fopen(path, "r");
 
 	if(pF != NULL) {
@@ -247,13 +247,13 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 		tilemap->area   = map_w * map_h;
 		
 		tilemap->mapData = realloc(tilemap->mapData, sizeof(char) * tilemap->area);
-		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(u_int8_t) * tilemap->area);
+		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(uint8_t) * tilemap->area);
 		
-		for(u_int16_t r = 0; r < tilemap->height; r++) {
+		for(uint16_t r = 0; r < tilemap->height; r++) {
 			char line[tilemap->width];			
 			fscanf(pF, "%s", line);
 
-			for(u_int16_t c = 0; c < tilemap->width; c++) 
+			for(uint16_t c = 0; c < tilemap->width; c++) 
 				tilemap->mapData[TileIndex(tilemap, c, r)] = line[c];
 		}
 		
@@ -261,7 +261,7 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 			printf("Opened %s\n", path);
 			printf("w: %d h: %d\n", tilemap->width, tilemap->height);
 			
-			for(u_int16_t i = 0; i < tilemap->area; i++) {
+			for(uint16_t i = 0; i < tilemap->area; i++) {
 				printf("%c", tilemap->mapData[i]);
 				if(i % tilemap->width == tilemap->width - 1) printf("\n");
 			}
@@ -282,7 +282,7 @@ void TilemapLoad(Tilemap *tilemap, char *path, u_int8_t flags) {
 	} else if(flags & DEBUG_A) printf("Unable to read file %s\n", path);
 }
 
-void TilemapWrite(Tilemap *tilemap, char *path, u_int8_t flags) {
+void TilemapWrite(Tilemap *tilemap, char *path, uint8_t flags) {
 	if(FileExists(path)) remove(path);
 	FILE *pF = fopen(path, "w");
 
@@ -293,7 +293,7 @@ void TilemapWrite(Tilemap *tilemap, char *path, u_int8_t flags) {
 	fprintf(pF, "%s\n", w_str);
 	fprintf(pF, "%s\n", h_str);
 
-	for(u_int16_t i = 0; i < tilemap->area; i++) {
+	for(uint16_t i = 0; i < tilemap->area; i++) {
 		int c = i % tilemap->width;
 		fprintf(pF, "%c", tilemap->mapData[i]);
 		if(c == tilemap->width - 1) fprintf(pF, "\n");
@@ -309,10 +309,10 @@ void TilemapWrite(Tilemap *tilemap, char *path, u_int8_t flags) {
 	tilemap->flags |= TM_SAVED;
 }
 
-void TilemapResize(Tilemap *tilemap, u_int16_t w, u_int16_t h, bool is_new) {
-	u_int16_t new_w = w;
-	u_int16_t new_h = h;
-	u_int16_t new_a = w * h;
+void TilemapResize(Tilemap *tilemap, uint16_t w, uint16_t h, bool is_new) {
+	uint16_t new_w = w;
+	uint16_t new_h = h;
+	uint16_t new_a = w * h;
 	
 	if(is_new) {
 		tilemap->width = new_w;
@@ -320,37 +320,37 @@ void TilemapResize(Tilemap *tilemap, u_int16_t w, u_int16_t h, bool is_new) {
 		tilemap->area = new_a;
 
 		tilemap->mapData = realloc(tilemap->mapData, sizeof(char) * tilemap->area);
-		for(u_int16_t i = 0; i < tilemap->area; i++) tilemap->mapData[i] = '0';
+		for(uint16_t i = 0; i < tilemap->area; i++) tilemap->mapData[i] = '0';
 		tilemap->action_count = 0;
 		tilemap->action_index = 0;
 
-		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(u_int8_t) * tilemap->area);
+		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(uint8_t) * tilemap->area);
 		tilemap->bounds = (Rectangle){0, 0, tilemap->width * TILE_SIZE, tilemap->height * TILE_SIZE};
 	} else {
-		u_int16_t buf_w = tilemap->width;
-		u_int16_t buf_h = tilemap->height;
+		uint16_t buf_w = tilemap->width;
+		uint16_t buf_h = tilemap->height;
 
 		char *buf = malloc(sizeof(char) * tilemap->area);
 		
-		for(u_int16_t i = 0; i < tilemap->area; i++) {
-			u_int16_t c = i % tilemap->width;
-			u_int16_t r = i / tilemap->width;
+		for(uint16_t i = 0; i < tilemap->area; i++) {
+			uint16_t c = i % tilemap->width;
+			uint16_t r = i / tilemap->width;
 
 			buf[i] = FetchTile(tilemap, (Coords){c, r});
 		}
 
 		tilemap->mapData = realloc(tilemap->mapData, sizeof(char) * new_a);
-		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(u_int8_t) * new_a);
+		tilemap->spr_index = realloc(tilemap->spr_index, sizeof(uint8_t) * new_a);
 		tilemap->bounds = (Rectangle){0, 0, new_w * TILE_SIZE, new_h * TILE_SIZE};
 		
 		tilemap->width = new_w;
 		tilemap->height = new_h;
 		tilemap->area = new_a;
 
-		for(u_int16_t r = 0; r < tilemap->height; r++) {
-			for(u_int16_t c = 0; c < tilemap->width; c++) {
-				u_int16_t old_idx = c + r * buf_w;
-				u_int16_t new_idx = c + r * tilemap->width;
+		for(uint16_t r = 0; r < tilemap->height; r++) {
+			for(uint16_t c = 0; c < tilemap->width; c++) {
+				uint16_t old_idx = c + r * buf_w;
+				uint16_t new_idx = c + r * tilemap->width;
 
 				if(c < buf_w && r < buf_h) tilemap->mapData[new_idx] = buf[old_idx];
 				else tilemap->mapData[new_idx] = '0';
@@ -385,7 +385,7 @@ void ApplyAction(Tilemap *tilemap, Action *action) {
 		tilemap->action_max_count *= 2;
 		
 		Action *new_actions_buffer = (Action*)malloc(sizeof(Action) * tilemap->action_max_count);
-		for(u_int32_t i = 0; i < tilemap->action_max_count / 2; i++) new_actions_buffer[i] = tilemap->actions[i];
+		for(uint32_t i = 0; i < tilemap->action_max_count / 2; i++) new_actions_buffer[i] = tilemap->actions[i];
 		
 		free(tilemap->actions);
 		tilemap->actions = new_actions_buffer;
@@ -397,11 +397,11 @@ void ApplyAction(Tilemap *tilemap, Action *action) {
 	}
 
 	// Set data
-	for(u_int16_t i = 0; i < (action->w * action->h); i++) {
-		u_int16_t c = i % action->w;
-		u_int16_t r = i / action->w;
+	for(uint16_t i = 0; i < (action->w * action->h); i++) {
+		uint16_t c = i % action->w;
+		uint16_t r = i / action->w;
 
-		u_int16_t tile_index = TileIndex(tilemap, c + action->c, r + action->r);
+		uint16_t tile_index = TileIndex(tilemap, c + action->c, r + action->r);
 		if(InBounds(tilemap, (Coords){c, r})) tilemap->mapData[tile_index] = action->next[i];
 	}
 	
@@ -428,9 +428,9 @@ void ApplyAction(Tilemap *tilemap, Action *action) {
 }
 
 void UndoAction(Tilemap *tilemap, Action *action) {
-	for(u_int16_t i = 0; i < (action->w * action->h); i++) {
-		u_int16_t c = i % action->w;
-		u_int16_t r = i / action->w;
+	for(uint16_t i = 0; i < (action->w * action->h); i++) {
+		uint16_t c = i % action->w;
+		uint16_t r = i / action->w;
 
 		action->next[i] = tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)];
 		tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)] = action->prev[i];
@@ -449,9 +449,9 @@ void UndoAction(Tilemap *tilemap, Action *action) {
 }
 
 void RedoAction(Tilemap *tilemap, Action *action) {
-	for(u_int16_t i = 0; i < (action->w * action->h); i++) {
-		u_int16_t c = i % action->w;
-		u_int16_t r = i / action->w;
+	for(uint16_t i = 0; i < (action->w * action->h); i++) {
+		uint16_t c = i % action->w;
+		uint16_t r = i / action->w;
 	
 		action->prev[i] = tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)];
 		tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)] = action->next[i];

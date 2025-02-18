@@ -3,7 +3,7 @@
 #include "raylib.h"
 #include "spritesheet.h"
 
-Spritesheet MakeSpritesheet(u_int8_t w, u_int8_t h, Texture2D texture) {
+Spritesheet MakeSpritesheet(uint8_t w, uint8_t h, Texture2D texture) {
 	Spritesheet spritesheet;
 
 	spritesheet.texture = texture;
@@ -17,9 +17,9 @@ Spritesheet MakeSpritesheet(u_int8_t w, u_int8_t h, Texture2D texture) {
 	
 	spritesheet.frame_rec = (Rectangle*)malloc(sizeof(Rectangle) * spritesheet.frame_count);
 
-	for(u_int8_t i = 0; i < spritesheet.frame_count; i++) {
-		u_int8_t c = i % spritesheet.cols;
-		u_int8_t r = i / spritesheet.cols;
+	for(uint8_t i = 0; i < spritesheet.frame_count; i++) {
+		uint8_t c = i % spritesheet.cols;
+		uint8_t r = i / spritesheet.cols;
 
 		spritesheet.frame_rec[i] = (Rectangle) {
 			c * spritesheet.frame_w,
@@ -37,7 +37,7 @@ void SpritesheetClose(Spritesheet *spritesheet) {
 	UnloadTexture(spritesheet->texture);
 }
 
-u_int8_t GetFrame(Spritesheet *spritesheet, u_int8_t c, u_int8_t r) {
+uint8_t GetFrame(Spritesheet *spritesheet, uint8_t c, uint8_t r) {
 	return c + r * spritesheet->cols;
 }
 

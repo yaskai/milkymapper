@@ -27,7 +27,10 @@ obj/x64/Debug/milkymapper/spritesheet.o: ../../src/spritesheet.c \
  /usr/include/bits/stdlib-float.h ../external/raylib-master/src/raylib.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdbool.h \
- ../../src/spritesheet.h
+ ../../src/spritesheet.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h
 /usr/include/stdc-predef.h:
 /usr/include/stdlib.h:
 /usr/include/bits/libc-header-start.h:
@@ -78,3 +81,8 @@ obj/x64/Debug/milkymapper/spritesheet.o: ../../src/spritesheet.c \
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdarg.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdbool.h:
 ../../src/spritesheet.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdint.h:
+/usr/include/stdint.h:
+/usr/include/bits/wchar.h:
+/usr/include/bits/stdint-uintn.h:
+/usr/include/bits/stdint-least.h:

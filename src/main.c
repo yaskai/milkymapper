@@ -30,11 +30,11 @@
 #include "tilemap.h"
 #include "cursor.h"
 
-enum EDITOR_STATE : u_int8_t {
+enum EDITOR_STATE : uint8_t {
 	HOME,
 	MAIN
 };
-u_int8_t _editor_state = HOME;
+uint8_t _editor_state = HOME;
 
 #define FLAG_A 0x1 
 #define FLAG_B 0x2
@@ -44,15 +44,15 @@ u_int8_t _editor_state = HOME;
 #define WINDOW_FLAG_B 0x02
 #define WINDOW_FLAG_C 0x04
 
-u_int8_t flags = (FLAG_A);
-u_int8_t window_flags = (WINDOW_FLAG_A); 
+uint8_t flags = (FLAG_A);
+uint8_t window_flags = (WINDOW_FLAG_A); 
 
 enum NewFileInput {
 	COLS,
 	ROWS,
 	NAME
 };
-u_int8_t new_input = COLS;
+uint8_t new_input = COLS;
 
 void DrawHelpText(int x, int y);
 
@@ -91,7 +91,7 @@ int main () {
 	bool exit_window = false;
 	bool exit_requested = false;
 
-	Spritesheet tile_sheet = MakeSpritesheet(64, 64, LoadTexture("tileset00.png"));
+	Spritesheet tile_sheet = MakeSpritesheet(64, 64, LoadTexture("tileset01.png"));
 
 	Camera2D cam = {
 		.target = {-ww * 0.25f, -wh * 0.25f},
@@ -320,8 +320,8 @@ int main () {
             GuiDMPropertyList((Rectangle){(ww - 180)/2, (wh - 280)/2, 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
 			
 			if(new_file_props[2].value.vbool != true) {
-				u_int16_t w = new_file_props[0].value.vint.val;
-				u_int16_t h = new_file_props[1].value.vint.val;
+				uint16_t w = new_file_props[0].value.vint.val;
+				uint16_t h = new_file_props[1].value.vint.val;
 				
 				TilemapResize(&tilemap, w, h, false);
 
