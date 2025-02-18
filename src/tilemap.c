@@ -16,6 +16,8 @@ u_int16_t tile_rgt;
 u_int16_t tile_top;
 u_int16_t tile_bot;
 
+Spritesheet misc_ss;
+
 void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, u_int16_t width, u_int16_t height) {
 	tilemap->cam = cam;
 	tilemap->spritesheet = ss;
@@ -34,6 +36,8 @@ void TilemapInit(Tilemap *tilemap, Camera2D *cam, Spritesheet *ss, u_int16_t wid
 	tilemap->actions = (Action*)malloc(sizeof(Action) * INIT_MAX_ACTIONS);
 
 	tilemap->flags = (DEBUG_A);
+
+	misc_ss = MakeSpritesheet(64, 84, LoadTexture("misc_sheet.png"));
 }
 
 void TilemapUpdateSprites(Tilemap *tilemap) {
@@ -105,6 +109,7 @@ void DrawTileGrid(Tilemap *tilemap) {
 void TilemapClose(Tilemap *tilemap) {
 	free(tilemap->mapData);
 	free(tilemap->actions);
+	SpritesheetClose(&misc_ss);
 }
 
 void ColorTile(Tilemap *tilemap, Coords coords, Color color) {
@@ -199,26 +204,31 @@ uint8_t TileGetAdj(Tilemap *tilemap, Coords pos) {
 }
 
 void GetDrawTile(Tilemap *tilemap, char tile_ch, Coords coords, u_int16_t tile_index) {
+	Vector2 draw_pos = CoordsToScreen(tilemap, coords);
+
 	switch(tile_ch) {
 		case TILE_BLOCK:
-			DrawSprite(tilemap->spritesheet, CoordsToScreen(tilemap, coords),
-				tilemap->spritesheet->frame_rec[tilemap->spr_index[tile_index]], 1.0f);
+			DrawSprite(tilemap->spritesheet, draw_pos, tilemap->spritesheet->frame_rec[tilemap->spr_index[tile_index]], 1.0f);
 			break;
 
 		case TILE_PLAYER:
-			ColorTile(tilemap, coords, GREEN);
+			DrawSprite(&misc_ss, (Vector2){draw_pos.x, draw_pos.y - 20}, misc_ss.frame_rec[0], 1.0f);
 			break;
 		
 		case TILE_ENEMY0:
-			ColorTile(tilemap, coords, RED);
+			DrawSprite(&misc_ss, draw_pos, misc_ss.frame_rec[1], 1.0f);
 			break;
 
 		case TILE_ENEMY1:
-			ColorTile(tilemap, coords, ORANGE);
+			DrawSprite(&misc_ss, (Vector2){draw_pos.x, draw_pos.y - 20}, misc_ss.frame_rec[3], 1.0f);
 			break;
 
 		case TILE_DOOR:
 			ColorTile(tilemap, coords, YELLOW);
+			break;
+
+		case TILE_FLOWER:
+			DrawSprite(&misc_ss, (Vector2){draw_pos.x, draw_pos.y - 20}, misc_ss.frame_rec[2], 1.0f);
 			break;
 	}
 }
@@ -446,7 +456,7 @@ void RedoAction(Tilemap *tilemap, Action *action) {
 		action->prev[i] = tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)];
 		tilemap->mapData[TileIndex(tilemap, action->c + c, action->r + r)] = action->next[i];
 	}
-	
+
 	if(tilemap->flags & DEBUG_B) {
 		printf("action redo ->...\n");
 		printf("coords: %d, %d\n", action->c, action->r);

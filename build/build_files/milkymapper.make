@@ -179,10 +179,12 @@ GENERATED += $(OBJDIR)/cursor.o
 GENERATED += $(OBJDIR)/main.o
 GENERATED += $(OBJDIR)/spritesheet.o
 GENERATED += $(OBJDIR)/tilemap.o
+GENERATED += $(OBJDIR)/ui.o
 OBJECTS += $(OBJDIR)/cursor.o
 OBJECTS += $(OBJDIR)/main.o
 OBJECTS += $(OBJDIR)/spritesheet.o
 OBJECTS += $(OBJDIR)/tilemap.o
+OBJECTS += $(OBJDIR)/ui.o
 
 # Rules
 # #############################################
@@ -256,6 +258,9 @@ $(OBJDIR)/spritesheet.o: ../../src/spritesheet.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/tilemap.o: ../../src/tilemap.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/ui.o: ../../src/ui.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

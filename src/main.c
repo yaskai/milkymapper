@@ -126,6 +126,7 @@ int main () {
 	Rectangle TOOL_ERASER_REC = { ww - 60, 200, 40, 40 };
 	Rectangle FILE_OPTION_REC = { 0, 0, 100, 30 };
 	Rectangle EDIT_OPTION_REC = { 100, 0, 100, 30 };
+	Rectangle OBJ_OPTION_REC  = { 200, 0, 100, 30 };
 
 	Rectangle button_recs[3] = {
 		TOOL_PENCIL_REC,
@@ -145,6 +146,9 @@ int main () {
 
 	int dm_save_active = 0;
 	bool dm_save_edit = false;
+
+	int OBJ_TAB_ACTIVE = 0;
+	bool OBJ_TAB_EDIT = false;
 
 	Rectangle fnew_opt = (Rectangle){FILE_OPTION_REC.x, 
 		FILE_OPTION_REC.y + (FILE_OPTION_REC.height * 1),
@@ -423,6 +427,52 @@ int main () {
 					(Rectangle){EDIT_OPTION_REC.x, EDIT_OPTION_REC.y, EDIT_OPTION_REC.width, EDIT_OPTION_REC.height * 4})) {
 					EDIT_TAB_EDIT = false;
 				}
+			}
+		}
+		/*
+		if(GuiDropdownBox(OBJ_OPTION_REC, 
+			"BLOCK;PLAYER;FLOWER;UFO",
+			&OBJ_TAB_ACTIVE, OBJ_TAB_EDIT)) {
+
+			OBJ_TAB_EDIT = !OBJ_TAB_EDIT;	
+		} 
+
+		if(OBJ_TAB_EDIT) {
+			cursor.on_ui = true;
+			cursor.ui_cooldown = 10.0f;
+		}
+		*/
+
+		if(GuiButton(OBJ_OPTION_REC, "Object")) {
+			OBJ_TAB_EDIT = !OBJ_TAB_EDIT;	
+		}
+
+		if(OBJ_TAB_EDIT) {
+			if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				if(!CheckCollisionPointRec(GetMousePosition(),
+					(Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y, OBJ_OPTION_REC.width, OBJ_OPTION_REC.height * 5})) {
+					OBJ_TAB_EDIT = false;
+				}
+			}
+
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 1, 100, 30}, "BLOCK")) {
+				pCursor->tile_ch = TILE_BLOCK;
+			}
+
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 2, 100, 30}, "PLAYER")) {
+				pCursor->tile_ch = TILE_PLAYER;
+			}
+
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 3, 100, 30}, "FLOWER")) {
+				pCursor->tile_ch = TILE_FLOWER;
+			}
+
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 4, 100, 30}, "UFO")) {
+				pCursor->tile_ch = TILE_ENEMY0;
+			}
+
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 4, 100, 30}, "ALIEN")) {
+				pCursor->tile_ch = TILE_ENEMY1;
 			}
 		}
 
