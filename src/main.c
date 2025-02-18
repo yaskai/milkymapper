@@ -448,32 +448,28 @@ int main () {
 		}
 
 		if(OBJ_TAB_EDIT) {
-			if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-				if(!CheckCollisionPointRec(GetMousePosition(),
-					(Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y, OBJ_OPTION_REC.width, OBJ_OPTION_REC.height * 5})) {
-					OBJ_TAB_EDIT = false;
-				}
+			if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && 
+			  !CheckCollisionPointRec(GetMousePosition(),
+			  (Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y,
+			  OBJ_OPTION_REC.width, OBJ_OPTION_REC.height * 5})) {
+				OBJ_TAB_EDIT = false;
 			}
 
-			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 1, 100, 30}, "BLOCK")) {
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 1, 100, 30}, "BLOCK")) 
 				pCursor->tile_ch = TILE_BLOCK;
-			}
 
-			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 2, 100, 30}, "PLAYER")) {
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 2, 100, 30}, "PLAYER")) 
 				pCursor->tile_ch = TILE_PLAYER;
-			}
 
-			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 3, 100, 30}, "FLOWER")) {
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 3, 100, 30}, "FLOWER")) 
 				pCursor->tile_ch = TILE_FLOWER;
-			}
 
-			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 4, 100, 30}, "UFO")) {
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 4, 100, 30}, "UFO")) 
 				pCursor->tile_ch = TILE_ENEMY0;
-			}
 
-			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 4, 100, 30}, "ALIEN")) {
+			if(GuiButton((Rectangle){OBJ_OPTION_REC.x, OBJ_OPTION_REC.y + OBJ_OPTION_REC.height * 5, 100, 30}, "ALIEN"))
 				pCursor->tile_ch = TILE_ENEMY1;
-			}
+			
 		}
 
 		GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
