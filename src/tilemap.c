@@ -363,12 +363,14 @@ void TilemapResize(Tilemap *tilemap, uint16_t w, uint16_t h, bool is_new) {
 	TilemapUpdateSprites(tilemap);
 }
 
-Action MakeAction(Coords origin, Coords dimensions) {
+Action MakeAction(Coords origin, Coords dimensions, Tilemap *tilemap) {
 	return (Action) {
 		.c = origin.c,
 		.r = origin.r,
 		.w = dimensions.c,
 		.h = dimensions.r,
+		.map_w = tilemap->width,
+		.map_h = tilemap->height,
 		.prev = (char*)malloc(sizeof(char) * (dimensions.c * dimensions.r)),
 		.next = (char*)malloc(sizeof(char) * (dimensions.c * dimensions.r))
 	};

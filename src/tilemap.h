@@ -46,6 +46,7 @@ typedef struct {
 	uint8_t id;
 	uint16_t c, r;
 	uint16_t w, h;
+	uint16_t map_w, map_h;
 	char *prev;
 	char *next;
 } Action;
@@ -74,7 +75,7 @@ void TilemapLoad(Tilemap *tilemap, char *path, uint8_t flags);
 void TilemapWrite(Tilemap *tilemap, char *path, uint8_t flags);
 void TilemapResize(Tilemap *tilemap, uint16_t w, uint16_t h, bool is_new);
 
-Action MakeAction(Coords origin, Coords dimensions);
+Action MakeAction(Coords origin, Coords dimensions, Tilemap *tilemap);
 void ApplyAction(Tilemap *tilemap, Action *action);
 void UndoAction(Tilemap *tilemap, Action *action);
 void RedoAction(Tilemap *tilemap, Action *action);

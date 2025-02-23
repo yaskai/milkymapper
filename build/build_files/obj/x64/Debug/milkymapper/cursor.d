@@ -32,7 +32,9 @@ obj/x64/Debug/milkymapper/cursor.o: ../../src/cursor.c \
  /usr/include/bits/atomic_wide_counter.h /usr/include/bits/struct_mutex.h \
  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-float.h /usr/include/string.h \
- /usr/include/strings.h ../external/raylib-master/src/raylib.h \
+ /usr/include/strings.h /usr/include/uchar.h \
+ /usr/include/bits/types/mbstate_t.h \
+ ../external/raylib-master/src/raylib.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdbool.h \
  ../external/raylib-master/src/raymath.h /usr/include/math.h \
  /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
@@ -103,6 +105,8 @@ obj/x64/Debug/milkymapper/cursor.o: ../../src/cursor.c \
 /usr/include/bits/stdlib-float.h:
 /usr/include/string.h:
 /usr/include/strings.h:
+/usr/include/uchar.h:
+/usr/include/bits/types/mbstate_t.h:
 ../external/raylib-master/src/raylib.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include/stdbool.h:
 ../external/raylib-master/src/raymath.h:

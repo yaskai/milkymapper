@@ -57,7 +57,8 @@ uint8_t new_input = COLS;
 void DrawHelpText(int x, int y);
 
 int main () {
-	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_FULLSCREEN_MODE);
+	//SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_FULLSCREEN_MODE);
+	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_BORDERLESS_WINDOWED_MODE);
 	
 	//printf("Monitors: %d\n", GetMonitorCount());
 	int monitor = GetCurrentMonitor();
@@ -87,6 +88,8 @@ int main () {
 	SearchAndSetResourceDir("resources");
 	GuiLoadStyleLavanda();
 	//GuiLoadStyleJungle();
+
+	bool help_mode = false;
 
 	bool exit_window = false;
 	bool exit_requested = false;
@@ -197,6 +200,8 @@ int main () {
 	while(!WindowShouldClose()) {
 		cursor.on_ui = false;
 		if(fileDialogState.itemFocused && fileDialogState.windowActive) cursor.on_ui = true;
+
+		if(IsKeyPressed(KEY_H)) help_mode = !help_mode;
        
 		if(fileDialogState.SelectFilePressed) {
             // Load level file(if supported extension)
@@ -242,9 +247,11 @@ int main () {
 						DrawTileGrid(&tilemap);
 					EndMode2D();
 
+					if(help_mode) DrawHelpText(100, 100);
+
 					if(GuiButton(TOOL_PENCIL_REC, GuiIconText(ICON_PENCIL_BIG, ""))) {
 						pCursor->tool = PENCIL;
-						pCursor->tile_ch = TILE_BLOCK;
+						//pCursor->tile_ch = TILE_BLOCK;
 						pCursor->ui_cooldown = 10;
 						pCursor->on_ui = true;
 						pCursor->select_count = 0;
@@ -252,7 +259,7 @@ int main () {
 					
 					if(GuiButton(TOOL_SELECT_REC, GuiIconText(ICON_BOX_DOTS_BIG, ""))) {
 						pCursor->tool = SELECT;
-						pCursor->tile_ch = TILE_BLOCK;
+						//pCursor->tile_ch = TILE_BLOCK;
 						pCursor->ui_cooldown = 10;
 						pCursor->on_ui = true;
 						pCursor->select_count = 0;
@@ -260,7 +267,7 @@ int main () {
 
 					if(GuiButton(TOOL_ERASER_REC, GuiIconText(ICON_RUBBER, ""))) {
 						pCursor->tool = ERASER;
-						pCursor->tile_ch = TILE_EMPTY;
+						//pCursor->tile_ch = TILE_EMPTY;
 						pCursor->ui_cooldown = 10;
 						pCursor->on_ui = true;
 						pCursor->select_count = 0;
@@ -533,7 +540,8 @@ void DrawHelpText(int x, int y) {
 	GuiDrawText("D, DELETE SELECTION", (Rectangle){x, y + (32 * 6), 500, 32}, 0, WHITE);
 	GuiDrawText("Z, UNDO", (Rectangle){x, y + (32 * 7), 500, 32}, 0, WHITE);
 	GuiDrawText("R, REDO", (Rectangle){x, y + (32 * 8), 500, 32}, 0, WHITE);
-	GuiDrawText("~, CHAR MODE ON/OFF", (Rectangle){x, y + (32 * 9), 500, 32}, 0, WHITE);
+	GuiDrawText("H, HELP", (Rectangle){x, y + (32 * 9), 500, 32}, 0, WHITE);
+	GuiDrawText("~, CHAR MODE ON/OFF", (Rectangle){x, y + (32 * 10), 500, 32}, 0, WHITE);
 
 	GuiDrawText("CTRL + N, NEW", (Rectangle){x + 500, y + (32 * 1), 500, 32}, 0, WHITE);
 	GuiDrawText("CTRL + O, OPEN", (Rectangle){x + 500, y + (32 * 2), 500, 32}, 0, WHITE);

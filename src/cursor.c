@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <uchar.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "tilemap.h"
@@ -29,7 +30,7 @@ Coords last_click_pos;
 
 Cursor MakeCursor(Tilemap *tilemap, Camera2D *cam) {	
 	pTilemap = tilemap;
-	Action paste = MakeAction((Coords){1, 1}, (Coords){1, 1});
+	Action paste = MakeAction((Coords){1, 1}, (Coords){1, 1}, tilemap);
 
 	return (Cursor) {
 		.state_flags = 0,
@@ -49,8 +50,6 @@ Cursor MakeCursor(Tilemap *tilemap, Camera2D *cam) {
 };
 
 void CursorUpdate(Cursor *cursor) {
-	if(cursor->tool == ERASER) cursor->tile_ch = TILE_EMPTY;
-	
 	// Position calculations	
 	cursor->position = (Vector2) {
 		GetMouseX() + cursor->cam->target.x - cursor->cam->offset.x,
@@ -95,6 +94,9 @@ void CursorUpdate(Cursor *cursor) {
 		cursor->state_flags &= ~CURSOR_DRAG;
 	}
 
+	char temp_ch = cursor->tile_ch;
+	if(cursor->tool == ERASER) temp_ch = TILE_EMPTY;
+
 	if(InBounds(pTilemap, cursor->grid_pos) && !cursor->on_ui && cursor->ui_cooldown <= 0 && !(cursor->state_flags & C_SHOW_CLIP)) {
 		if(cursor->tool == SELECT) {
 			if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -114,7 +116,7 @@ void CursorUpdate(Cursor *cursor) {
 			}
 		} else if(cursor->tool == PENCIL || cursor->tool == ERASER) {
 			if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
-			   pTilemap->mapData[TileIndex(pTilemap, cursor->grid_pos.c, cursor->grid_pos.r)] != cursor->tile_ch &&
+			   pTilemap->mapData[TileIndex(pTilemap, cursor->grid_pos.c, cursor->grid_pos.r)] != temp_ch &&
 			   CheckCollisionPointRec(cursor->position, pTilemap->bounds))
 				OnClick(cursor);	
 		}
@@ -131,7 +133,7 @@ void CursorUpdate(Cursor *cursor) {
 		if(IsKeyPressed(KEY_T))	{
 			cursor->tool++;
 			if(cursor->tool > ERASER) cursor->tool = PENCIL;
-			if(cursor->tool == PENCIL && cursor->tile_ch == '0') cursor->tile_ch = '1';
+			//if(cursor->tool == PENCIL && cursor->tile_ch == '0') cursor->tile_ch = '1';
 		}
 
 		// Undo
@@ -251,25 +253,29 @@ void CursorClose(Cursor *cursor) {
 
 void OnClick(Cursor *cursor) {
 	uint16_t action_w, action_h;
+	char temp_ch = cursor->tile_ch;
 
 	if(cursor->tool == PENCIL || cursor->tool == ERASER) {
 		action_w = 1;
 		action_h = 1;
 	};
+
+	if(cursor->tool == ERASER) temp_ch = TILE_EMPTY;  
 	
 	uint8_t tile_count = action_w * action_h;
 	
 	char *action_buffer_prev = (char*)malloc(sizeof(char) * tile_count); 
 	char *action_buffer_next = (char*)malloc(sizeof(char) * tile_count); 
 	 
-	Action action = MakeAction(cursor->grid_pos, (Coords){action_w, action_h});
+	Action action = MakeAction(cursor->grid_pos, (Coords){action_w, action_h}, cursor->tilemap);
 
 	for(uint16_t i = 0; i < (action_w * action_h); i++) {
 		uint16_t c = i % action_w;
 		uint16_t r = i / action_w;
 
 		action_buffer_prev[i] = FetchTile(pTilemap, cursor->grid_pos);	
-		action_buffer_next[i] = cursor->tile_ch;
+		//action_buffer_next[i] = cursor->tile_ch;
+		action_buffer_next[i] = temp_ch;
 	}
 
 	action.prev = action_buffer_prev;
@@ -321,7 +327,7 @@ void SetSelectionBox(Cursor *cursor) {
 }
 
 void PaintSelection(Cursor *cursor, char ch) {
-	Action paint = MakeAction(cursor->select_box[0], (Coords){selection_w, selection_h});
+	Action paint = MakeAction(cursor->select_box[0], (Coords){selection_w, selection_h}, cursor->tilemap);
 	
 	char *paint_prev_buf = (char*)malloc(sizeof(char) * select_count);	
 	char *paint_next_buf = (char*)malloc(sizeof(char) * select_count);
@@ -346,7 +352,7 @@ void Copy(Cursor *cursor) {
 	buf_h = selection_h;
 	cursor->buf_count = select_count;
 
-	Action copy = MakeAction(cursor->select_box[0], (Coords){selection_w, selection_h});
+	Action copy = MakeAction(cursor->select_box[0], (Coords){selection_w, selection_h}, cursor->tilemap);
 	
 	cursor->paste->c = cursor->select_box[0].c;
 	cursor->paste->r = cursor->select_box[0].r;
@@ -382,7 +388,7 @@ void Paste(Cursor *cursor) {
 	
 	char *paste_prev_buf = (char*)(malloc(sizeof(char) * paste_count));
 	char *paste_next_buf = (char*)(malloc(sizeof(char) * paste_count));
-	Action paste = MakeAction(paste_coords, (Coords){paste_w, paste_h});
+	Action paste = MakeAction(paste_coords, (Coords){paste_w, paste_h}, cursor->tilemap);
 
 	//TODO: 
 	// Add check for left
