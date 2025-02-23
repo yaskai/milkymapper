@@ -302,7 +302,8 @@ int main () {
 		GuiWindowFileDialog(&fileDialogState);
 		
 		if(NEW_FILE) {
-            GuiDMPropertyList((Rectangle){(ww - 180)/2, (wh - 280)/2, 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
+            //GuiDMPropertyList((Rectangle){(ww - 180)/2, (wh - 280)/2, 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
+            GuiDMPropertyList((Rectangle){(600), (300), 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
 
 			if(new_file_props[2].value.vbool != true) {
 				new_w = new_file_props[0].value.vint.val;	
@@ -324,7 +325,8 @@ int main () {
 		}
 
 		if(RESIZE) {
-            GuiDMPropertyList((Rectangle){(ww - 180)/2, (wh - 280)/2, 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
+            //GuiDMPropertyList((Rectangle){(ww - 180)/2, (wh - 280)/2, 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
+            GuiDMPropertyList((Rectangle){(600), (300), 180, 280}, new_file_props, SIZEOF(new_file_props), &new_focus, &new_scroll);
 			
 			if(new_file_props[2].value.vbool != true) {
 				uint16_t w = new_file_props[0].value.vint.val;
