@@ -128,7 +128,7 @@ void CursorUpdate(Cursor *cursor) {
 	else mouse_down_timer--;
 	if(mouse_down_timer < 0) mouse_down_timer = 0;
 
-	if(!(cursor->state_flags & C_CHAR_MODE)) {
+	if(!(cursor->state_flags & C_CHAR_MODE) && !cursor->on_inputbox) {
 		// Cycle tools
 		if(IsKeyPressed(KEY_T))	{
 			cursor->tool++;

@@ -230,6 +230,16 @@ void GetDrawTile(Tilemap *tilemap, char tile_ch, Coords coords, uint16_t tile_in
 		case TILE_FLOWER:
 			DrawSprite(&misc_ss, (Vector2){draw_pos.x, draw_pos.y - 20}, misc_ss.frame_rec[2], 1.0f);
 			break;
+
+		case 'x':
+			DrawSprite(&misc_ss, draw_pos, misc_ss.frame_rec[1], 1.0f);
+			DrawText("<->", draw_pos.x + 8, draw_pos.y + 8, 30, WHITE);
+			break;
+
+		case 'y':
+			DrawSprite(&misc_ss, draw_pos, misc_ss.frame_rec[1], 1.0f);
+			DrawText("^", draw_pos.x + 8, draw_pos.y + 8, 30, WHITE);
+			break;
 	}
 }
 

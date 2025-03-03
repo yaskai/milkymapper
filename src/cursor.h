@@ -23,6 +23,7 @@ typedef struct {
 	uint16_t select_count;
 	uint16_t buf_count;
 	bool on_ui;
+	bool on_inputbox;
 	float ui_cooldown;
 	Coords grid_pos;
 	Vector2 position;

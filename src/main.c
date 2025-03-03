@@ -30,6 +30,13 @@
 #include "tilemap.h"
 #include "cursor.h"
 
+enum TARGET_OS : uint8_t {
+  LINUX,
+  MACOS,
+  WIN64
+};
+uint8_t target_os = LINUX;
+
 enum EDITOR_STATE : uint8_t {
 	HOME,
 	MAIN
@@ -45,7 +52,7 @@ uint8_t _editor_state = HOME;
 #define WINDOW_FLAG_C 0x04
 
 uint8_t flags = (FLAG_A);
-uint8_t window_flags = (WINDOW_FLAG_A); 
+uint8_t window_flags = (WINDOW_FLAG_C); 
 
 enum NewFileInput {
 	COLS,
@@ -57,8 +64,18 @@ uint8_t new_input = COLS;
 void DrawHelpText(int x, int y);
 
 int main () {
-	//SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_FULLSCREEN_MODE);
-	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_BORDERLESS_WINDOWED_MODE);
+
+	switch(target_os) {
+		case LINUX:
+			SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_UNDECORATED);
+			break;
+		case MACOS:
+			break;
+		case WIN64:
+			SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_FULLSCREEN_MODE);
+			break;
+	}
+	//SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_BORDERLESS_WINDOWED_MODE);
 	
 	//printf("Monitors: %d\n", GetMonitorCount());
 	int monitor = GetCurrentMonitor();
@@ -78,6 +95,10 @@ int main () {
 		ww = GetMonitorWidth(monitor);
 		wh = GetMonitorHeight(monitor);
 		fps = GetMonitorRefreshRate(monitor);
+    	
+		//ww = GetScreenWidth(); 
+		//wh = GetScreenHeight();
+		fps = GetMonitorRefreshRate(monitor);
 	}
 
 	InitWindow(ww, wh, "Milky Mapper");
@@ -89,12 +110,14 @@ int main () {
 	GuiLoadStyleLavanda();
 	//GuiLoadStyleJungle();
 
+	uint8_t style = 0;
+
 	bool help_mode = false;
 
 	bool exit_window = false;
 	bool exit_requested = false;
 
-	Spritesheet tile_sheet = MakeSpritesheet(64, 64, LoadTexture("tileset01.png"));
+	Spritesheet tile_sheet = MakeSpritesheet(64, 64, LoadTexture("tileset03.png"));
 
 	Camera2D cam = {
 		.target = {-ww * 0.25f, -wh * 0.25f},
@@ -103,7 +126,7 @@ int main () {
 		.rotation = 0.0f,
 		.zoom = 1.0f
 	};
-	
+
 	// Init
 	Tilemap tilemap;
 	TilemapInit(&tilemap, &cam, &tile_sheet, 160, 16);
@@ -119,14 +142,26 @@ int main () {
 	bool RESIZE = false;
 	
 	GuiWindowFileDialogState fileDialogState = InitGuiWindowFileDialog(GetWorkingDirectory());
-    char fileNameToLoad[512] = { 0 };
+  char fileNameToLoad[512] = { 0 };
 	char fileNameToSave[512] = { 0 };
 	fileDialogState.windowBounds = (Rectangle){ww * 0.25f, wh * 0.25f, 1000, 700};
+  
+  if(target_os == WIN64) {
+    strcpy(fileNameToSave, TextFormat("%s", GetWorkingDirectory()));
+    strcat(fileNameToSave, "\\NEW_LEVEL.mlf");
+  }
 
 	// Button recs
+    /*
 	Rectangle TOOL_PENCIL_REC = { ww - 60, 100, 40, 40 };
 	Rectangle TOOL_SELECT_REC = { ww - 60, 150, 40, 40 };
 	Rectangle TOOL_ERASER_REC = { ww - 60, 200, 40, 40 };
+    */
+
+	Rectangle TOOL_PENCIL_REC = { GetScreenWidth() - 60, 100, 40, 40 };
+	Rectangle TOOL_SELECT_REC = { GetScreenWidth() - 60, 150, 40, 40 };
+	Rectangle TOOL_ERASER_REC = { GetScreenWidth() - 60, 200, 40, 40 };
+
 	Rectangle FILE_OPTION_REC = { 0, 0, 100, 30 };
 	Rectangle EDIT_OPTION_REC = { 100, 0, 100, 30 };
 	Rectangle OBJ_OPTION_REC  = { 200, 0, 100, 30 };
@@ -199,22 +234,23 @@ int main () {
 
 	while(!WindowShouldClose()) {
 		cursor.on_ui = false;
+		cursor.on_inputbox = false;
 		if(fileDialogState.itemFocused && fileDialogState.windowActive) cursor.on_ui = true;
 
 		if(IsKeyPressed(KEY_H)) help_mode = !help_mode;
        
 		if(fileDialogState.SelectFilePressed) {
             // Load level file(if supported extension)
-            if(IsFileExtension(fileDialogState.fileNameText, ".mlf")) {
-                strcpy(fileNameToLoad, TextFormat("%s" PATH_SEPERATOR "%s", fileDialogState.dirPathText, fileDialogState.fileNameText));
+		  if(IsFileExtension(fileDialogState.fileNameText, ".mlf")) {
+				strcpy(fileNameToLoad, TextFormat("%s" PATH_SEPERATOR "%s", fileDialogState.dirPathText, fileDialogState.fileNameText));
 				strcpy(fileNameToSave, fileNameToLoad);
 				
 				TilemapLoad(&tilemap, fileNameToLoad, flags);
 				_editor_state = MAIN;
 			}
 
-            fileDialogState.SelectFilePressed = false;
-        }
+		  fileDialogState.SelectFilePressed = false;
+		}
 
 		if(_editor_state == MAIN) {
 			// Check if hovering tool buttons
@@ -225,7 +261,7 @@ int main () {
 				}
 			}
 
-			if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_R)) {
+			if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_R) && !cursor.on_inputbox) {
 				new_file_props[2].value.vbool = true;
 				RESIZE = true;	
 			}
@@ -278,8 +314,10 @@ int main () {
 		// Current file Label
 		GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
 		DrawRectangleV((Vector2){0, wh - 40}, (Vector2){ww, 40}, ColorAlpha(BLACK, 0.5f));
-		if(pTilemap->flags & TM_SAVED) GuiLabel((Rectangle){4, wh - 40, 500, 40}, fileNameToSave);
-		else GuiLabel((Rectangle){4, wh - 40, 500, 40}, TextFormat("%s*", fileNameToSave));
+		//if(pTilemap->flags & TM_SAVED) GuiLabel((Rectangle){4, wh - 40, 500, 40}, fileNameToSave);
+		//else GuiLabel((Rectangle){4, wh - 40, 500, 40}, TextFormat("%s*", fileNameToSave));
+		if(pTilemap->flags & TM_SAVED) GuiLabel((Rectangle){4, GetScreenHeight() - 40, 500, 40}, fileNameToSave);
+		else GuiLabel((Rectangle){4, GetScreenHeight() - 40, 500, 40}, TextFormat("%s*", fileNameToSave));
 		GuiSetStyle(DEFAULT, TEXT_SIZE, 15);
 
 		if(fileDialogState.windowActive) {
@@ -287,12 +325,12 @@ int main () {
 			cursor.on_ui = true;	
 		}
 		 
-		if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) fileDialogState.windowActive = true;
+		if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O) && !cursor.on_inputbox) fileDialogState.windowActive = true;
 	
-		if(_editor_state == MAIN && !(cursor.state_flags & C_CHAR_MODE)) {	
+		if(_editor_state == MAIN && !(cursor.state_flags & C_CHAR_MODE) && !cursor.on_inputbox) {	
 			if(IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) SAVE_PROMPT = true;
 			else if(IsKeyUp(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_W)) {
-				if(strcmp(fileNameToSave, "")) {
+				if(!strcmp(fileNameToSave, "")) {
 					TilemapWrite(&tilemap, fileNameToSave, 0);	
 				} else SAVE_PROMPT = true;
 			}
@@ -315,7 +353,6 @@ int main () {
 
 				new_file_props[2].value.vbool = 0;
 
-				strcpy(fileNameToSave, "");
 			}
 
 			if(IsKeyDown(KEY_ESCAPE)) {
@@ -342,9 +379,10 @@ int main () {
 
 		if(SAVE_PROMPT) {
 			cursor.on_ui = true;
+			cursor.on_inputbox = true;
 			cursor.ui_cooldown = 10;
 
-            int result = GuiTextInputBox((Rectangle){ (float)GetScreenWidth()/2 - 240,
+			int result = GuiTextInputBox((Rectangle){ (float)GetScreenWidth()/2 - 240,
 				(float)GetScreenHeight()/2 - 80, 480, 200 },
 				 GuiIconText(ICON_FILE_SAVE, "Save file as..."),
 				 "Introduce output file name:", "Ok;Cancel", fileNameToSave, 255, NULL);
@@ -513,7 +551,21 @@ int main () {
 		}
 
 		EndDrawing();
-		
+
+    if(IsKeyPressed(KEY_L) && !cursor.on_inputbox && !(cursor.state_flags & C_CHAR_MODE)) {
+		style++;
+		if(style > 5) style = 0;
+
+		switch(style) {
+				case 0: GuiLoadStyleLavanda();  break;
+				case 1: GuiLoadStyleJungle();   break;
+				case 2: GuiLoadStyleCherry();   break;
+				case 3: GuiLoadStyleTerminal(); break;
+				case 4: GuiLoadStyleCyber();    break;
+				case 5: GuiLoadStyleDark();      break;
+			}
+		}
+	 	
 		CursorUpdate(&cursor);
 	}
 
@@ -529,7 +581,6 @@ int main () {
 void DrawHelpText(int x, int y) {
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
 
-
 	DrawRectangle(x, y,  1000, 800, BLACK);
 	DrawRectangleLines(x - 4, y - 4, 1008, 800, WHITE);
 
@@ -543,7 +594,8 @@ void DrawHelpText(int x, int y) {
 	GuiDrawText("Z, UNDO", (Rectangle){x, y + (32 * 7), 500, 32}, 0, WHITE);
 	GuiDrawText("R, REDO", (Rectangle){x, y + (32 * 8), 500, 32}, 0, WHITE);
 	GuiDrawText("H, HELP", (Rectangle){x, y + (32 * 9), 500, 32}, 0, WHITE);
-	GuiDrawText("~, CHAR MODE ON/OFF", (Rectangle){x, y + (32 * 10), 500, 32}, 0, WHITE);
+	GuiDrawText("L, CHANGE LOOK", (Rectangle){x, y + (32 * 10), 500, 32}, 0, WHITE);
+	GuiDrawText("~, CHAR MODE ON/OFF", (Rectangle){x, y + (32 * 11), 500, 32}, 0, WHITE);
 
 	GuiDrawText("CTRL + N, NEW", (Rectangle){x + 500, y + (32 * 1), 500, 32}, 0, WHITE);
 	GuiDrawText("CTRL + O, OPEN", (Rectangle){x + 500, y + (32 * 2), 500, 32}, 0, WHITE);
