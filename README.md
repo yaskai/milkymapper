@@ -1,6 +1,8 @@
 # Milky Mapper
 A 2D tilemap level editor written in C using raylib
 
+![Alt text](/sc.png?raw=true "")
+
 # Supported Platforms
 * Windows
 * Linux
